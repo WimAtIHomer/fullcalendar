@@ -246,7 +246,7 @@ function Calendar(element, instanceOptions) {
 	var date;
 	var events = [];
 	var _dragElement;
-	
+	var rooms = [];
 	
 	
 	// Main Rendering

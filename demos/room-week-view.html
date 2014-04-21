@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset='utf-8' />
+<link href='../build/out/fullcalendar.css' rel='stylesheet' />
+<link href='../build/out/fullcalendar.print.css' rel='stylesheet' media='print' />
+<script src='../lib/moment/moment.js'></script>
+<script src='../lib/jquery/jquery.js'></script>
+<script src='../lib/jquery-ui/ui/jquery-ui.js'></script>
+<script src='../build/out/fullcalendar.js'></script>
+<script>
+
+	$(document).ready(function() {
+
+        $('#external-events div.external-event').each(function() {
+
+            // create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
+            // it doesn't need to have a start or end
+            var eventObject = {
+                title: $.trim($(this).text()) // use the element's text as the event title
+            };
+
+            // store the Event Object in the DOM element so we can get to it later
+            $(this).data('eventObject', eventObject);
+
+            // make the event draggable using jQuery UI
+            $(this).draggable({
+                zIndex: 999,
+                revert: false,      // will cause the event to go back to its
+                revertDuration: 0  //  original position after the drag
+            });
+
+        });
+        var rooms = [ {title: "Room1", key: 1}, { title : "Room2", key: 2}, { title : "Room3", key: 3}, { title : "Room4", key: 4}];
+
+		$('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay'
+			},
+			defaultDate: '2014-01-12',
+            editable: true,
+            droppable: true,
+            drop: function(date, col) { // this function is called when something is dropped
+
+                // retrieve the dropped element's stored Event Object
+                var originalEventObject = $(this).data('eventObject');
+
+                // we need to copy it, so that multiple events don't have a reference to the same object
+                var copiedEventObject = $.extend({}, originalEventObject);
+
+                // assign it the date that was reported
+                copiedEventObject.start = date;
+                copiedEventObject.roomKey = rooms[col].key;
+
+                // render the event on the calendar
+                // the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
+                $('#calendar').fullCalendar('renderEvent', copiedEventObject, true);
+
+                // if so, remove the element from the "Draggable Events" list
+                $(this).remove();
+            },
+            allDaySlot: false,
+            slotDuration: "02:00:00",
+            snapDuration: "00:15:00",
+            slotEventOverlap: false,
+            defaultView: "roomWeek",
+            showWeekNumbers: false,
+            rooms: rooms,
+            events : [
+				{
+					title: 'All Day Event',
+					start: '2014-01-01',
+                    roomKey: 2
+				},
+				{
+					title: 'Long Event',
+					start: '2014-01-07',
+					end: '2014-01-10',
+                    roomKey: 2
+				},
+				{
+					id: 999,
+					title: 'Repeating Event',
+					start: '2014-01-09T16:00:00',
+                    roomKey: 2
+				},
+				{
+					id: 999,
+					title: 'Repeating Event',
+					start: '2014-01-16T16:00:00',
+                    roomKey: 2
+				},
+				{
+					title: 'Meeting',
+					start: '2014-01-12T10:30:00',
+					end: '2014-01-12T12:30:00',
+                    roomKey: 2
+				},
+				{
+					title: 'Lunch',
+					start: '2014-01-12T12:00:00',
+                    roomKey: 2
+				},
+				{
+					title: 'Birthday Party',
+					start: '2014-01-13T07:00:00',
+                    roomKey: 2
+				},
+				{
+					title: 'Click for Google',
+					url: 'http://google.com/',
+					start: '2014-01-28',
+                    roomKey: 2
+				},
+                {
+                    title: 'All Day Event',
+                    start: '2014-01-01',
+                    roomKey: 3
+                },
+                {
+                    title: 'Long Event',
+                    start: '2014-01-07',
+                    end: '2014-01-10',
+                    roomKey: 3
+                },
+                {
+                    id: 999,
+                    title: 'Repeating Event',
+                    start: '2014-01-09T16:00:00',
+                    roomKey: 3
+                },
+                {
+                    id: 999,
+                    title: 'Repeating Event',
+                    start: '2014-01-16T16:00:00',
+                    roomKey: 3
+                },
+                {
+                    title: 'Meeting',
+                    start: '2014-01-12T10:30:00',
+                    end: '2014-01-12T12:30:00',
+                    roomKey: 3
+                },
+                {
+                    title: 'Lunch',
+                    start: '2014-01-12T12:00:00',
+                    roomKey: 3
+                },
+                {
+                    title: 'Birthday Party',
+                    start: '2014-01-13T07:00:00',
+                    roomKey: 3
+                },
+                {
+                    title: 'Click for Google',
+                    url: 'http://google.com/',
+                    start: '2014-01-28',
+                    roomKey: 3
+                }
+			]
+		});
+	});
+
+</script>
+<style>
+
+    body {
+        margin-top: 40px;
+        text-align: center;
+        font-size: 14px;
+        font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+    }
+
+    #wrap {
+        width: 1100px;
+        margin: 0 auto;
+    }
+
+    #external-events {
+        float: left;
+        width: 150px;
+        padding: 0 10px;
+        border: 1px solid #ccc;
+        background: #eee;
+        text-align: left;
+    }
+
+    #external-events h4 {
+        font-size: 16px;
+        margin-top: 0;
+        padding-top: 1em;
+    }
+
+    .external-event { /* try to mimick the look of a real event */
+        margin: 10px 0;
+        padding: 2px 4px;
+        background: #3366CC;
+        color: #fff;
+        font-size: .85em;
+        cursor: pointer;
+    }
+
+    #external-events p {
+        margin: 1.5em 0;
+        font-size: 11px;
+        color: #666;
+    }
+
+    #external-events p input {
+        margin: 0;
+        vertical-align: middle;
+    }
+
+    #calendar {
+        float: right;
+        width: 900px;
+    }
+
+</style>
+</head>
+<body>
+    <div id='wrap'>
+
+        <div id='external-events'>
+            <h4>Draggable Events</h4>
+            <div class='external-event'>My Event 1</div>
+            <div class='external-event'>My Event 2</div>
+            <div class='external-event'>My Event 3</div>
+            <div class='external-event'>My Event 4</div>
+            <div class='external-event'>My Event 5</div>
+        </div>
+        <div id='calendar'></div>
+        <div style='clear:both'></div>
+    </div>
+</body>
+</html>

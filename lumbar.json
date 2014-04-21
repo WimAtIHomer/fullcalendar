@@ -31,6 +31,9 @@
         "src/agenda/AgendaDayView.js",
         "src/agenda/AgendaView.js",
         "src/agenda/AgendaEventRenderer.js",
+        "src/room/RoomWeekView.js",
+        "src/room/RoomView.js",
+        "src/room/RoomEventRenderer.js",
         "src/common/View.js",
         "src/common/DayEventRenderer.js",
         "src/common/SelectionManager.js",
@@ -44,7 +47,8 @@
         "src/main.css",
         "src/common/common.css",
         "src/basic/basic.css",
-        "src/agenda/agenda.css"
+        "src/agenda/agenda.css",
+        "src/room/room.css"
       ]
     },
     "fullcalendar.print": {
