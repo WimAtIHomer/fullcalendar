@@ -603,8 +603,8 @@ function RoomEventRenderer() {
 						eventEnd = eventStart.clone().add(calendar.defaultAllDayEventDuration);
 					}
 					else {
-						eventStart = event.start.clone().add(snapDelta * snapDuration).add('days', dayDelta);
-						eventEnd = getEventEnd(event).add(snapDelta * snapDuration).add('days', dayDelta);
+						eventStart = event.start.clone().add(snapDelta * snapDuration);
+						eventEnd = getEventEnd(event).add(snapDelta * snapDuration);
 					}
 
 					updateUI();
@@ -626,6 +626,11 @@ function RoomEventRenderer() {
 				trigger('eventDragStop', eventElement, event, ev, ui);
 
 				if (isInBounds && (isAllDay || dayDelta || snapDelta)) { // changed!
+                    // update roomKey if column switch
+                    var cell = coordinateGrid.cell(ev.pageX, ev.pageY);
+                    rooms = opt('rooms');
+                    event.roomKey = rooms[cell.col].key
+
 					eventDrop(
 						this, // el
 						event,

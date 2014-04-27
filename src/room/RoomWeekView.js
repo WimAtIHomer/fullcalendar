@@ -16,7 +16,7 @@ function RoomWeekView(element, calendar) { // TODO: make a DayView mixin
 
 	function incrementDate(date, delta) {
 		var out = date.clone().stripTime().add('days', delta);
-		out = t.skipHiddenDays(out, delta < 0 ? -7 : 7);
+		out = t.skipHiddenDays(out, delta < 0 ? -1 : 1);
 		return out;
 	}
 

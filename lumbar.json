@@ -32,6 +32,7 @@
         "src/agenda/AgendaView.js",
         "src/agenda/AgendaEventRenderer.js",
         "src/room/RoomWeekView.js",
+        "src/room/RoomMonthView.js",
         "src/room/RoomView.js",
         "src/room/RoomEventRenderer.js",
         "src/common/View.js",

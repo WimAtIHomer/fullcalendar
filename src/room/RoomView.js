@@ -644,7 +644,7 @@ function RoomView(element, calendar, viewName) {
 		overlayEnd = overlayEnd.clone().stripZone();
 
         var dayStart = t.start.clone();
-        var dayEnd = dayStart.clone().add('days', 1);
+        var dayEnd = t.end.clone();
 
         var stretchStart = dayStart < overlayStart ? overlayStart : dayStart; // the max of the two
         var stretchEnd = dayEnd < overlayEnd ? dayEnd : overlayEnd; // the min of the two
