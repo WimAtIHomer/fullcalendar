@@ -194,6 +194,7 @@ function RoomView(element, calendar, viewName) {
 		var s;
 		var headerClass = tm + "-widget-header";
 		var contentClass = tm + "-widget-content";
+        var dayStartClass = tm + "-day-start"
 		var slotTime;
 		var slotDate;
         var maxDate;
@@ -267,7 +268,7 @@ function RoomView(element, calendar, viewName) {
 		while (slotDate < maxDate) {
 			minutes = slotDate.minutes();
 			s +=
-				"<tr class='fc-slot" + slotCnt + ' ' + (!minutes ? '' : 'fc-minor') + "'>" +
+				"<tr class='fc-slot" + slotCnt + ' ' + (!minutes ? '' : 'fc-minor') + " " + ((slotTime <= minTime) ? dayStartClass: '') + "'>" +
 				"<th class='fc-agenda-axis " + headerClass + "'>" +
 				((!slotNormal || !minutes) ?
                     ((slotTime <= minTime) ? htmlEscape(formatDate(slotDate, colFormat)) : htmlEscape(formatDate(slotDate, opt('axisFormat')))) :
