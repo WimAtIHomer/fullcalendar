@@ -23,8 +23,10 @@ function RoomWeekView(element, calendar) { // TODO: make a DayView mixin
 
 	function render(date) {
 
-		t.start = t.intervalStart = date.clone().stripTime();
-		t.end = t.intervalEnd = t.start.clone().add('days', 7);
+        t.intervalStart = date.clone();
+        t.intervalEnd = date.clone();
+        t.start = date.clone().stripTime();
+		t.end = t.start.clone().add('days', 7);
 
 		t.title = calendar.formatDate(t.start, t.opt('titleFormat'));
 

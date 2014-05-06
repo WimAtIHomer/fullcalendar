@@ -23,8 +23,10 @@ function RoomMonthView(element, calendar) { // TODO: make a DayView mixin
 
 	function render(date) {
 
-		t.start = t.intervalStart = date.clone().add('days', -7).stripTime();
-		t.end = t.intervalEnd = t.start.clone().add('months', 1);
+        t.intervalStart = date.clone();
+        t.intervalEnd = date.clone();
+		t.start = date.clone().add('days', -7).stripTime();
+		t.end = t.start.clone().add('months', 1);
 
 		t.title = calendar.formatDate(date.clone().stripTime(), t.opt('titleFormat'));
 

@@ -159,12 +159,7 @@ function RoomView(element, calendar, viewName) {
 		updateOptions();
         colCnt = rooms.length;
 
-		if (!dayTable) { // first time rendering?
-			buildSkeleton(); // builds day table, slot area, events containers
-		}
-		else {
-			buildDayTable(); // rebuilds day table
-		}
+    	buildSkeleton(); // builds day table, slot area, events containers
 	}
 	
 	
@@ -202,7 +197,10 @@ function RoomView(element, calendar, viewName) {
 		var slotNormal = slotDuration.asMinutes() % 15 === 0;
 		
 		buildDayTable();
-		
+
+        if (slotLayer) {
+            slotLayer.remove();
+        }
 		slotLayer =
 			$("<div style='position:absolute;z-index:2;left:0;width:100%'/>")
 				.appendTo(element);
