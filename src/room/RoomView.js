@@ -268,7 +268,7 @@ function RoomView(element, calendar, viewName) {
 			s +=
 				"<tr class='fc-slot" + slotCnt + ' ' + (!minutes ? '' : 'fc-minor') + " " + ((slotTime <= minTime) ? dayStartClass: '') + "'>" +
 				"<th class='fc-agenda-axis " + headerClass + "'>" +
-				((!slotNormal || !minutes) ?
+				((!slotNormal || !minutes && slotCnt%2 == 0) ?
                     ((slotTime <= minTime) ? htmlEscape(formatDate(slotDate, colFormat)) : htmlEscape(formatDate(slotDate, opt('axisFormat')))) :
 					'&nbsp;'
 					) +
