@@ -766,12 +766,12 @@ function RoomView(element, calendar, viewName) {
 		if (time < minTime) {
 			return 0;
 		}
-//		if (time >= maxTime) {
-//			return slotTable.height();
-//		}
 
 		var slots = (time - minTime) / slotDuration;
 		var slotIndex = Math.floor(slots);
+        if (slotIndex >= slotCnt) {
+            slotIndex = slotCnt - 1
+        }
 		var slotPartial = slots - slotIndex;
 		var slotTop = slotTopCache[slotIndex];
 
