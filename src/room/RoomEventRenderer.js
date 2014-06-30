@@ -414,6 +414,8 @@ function RoomEventRenderer() {
 
 		eventElement.draggable({
 			opacity: opt('dragOpacity', 'month'), // use whatever the month view was using
+            scroll: true,
+            scrollSensitivity: 100,
 			revertDuration: opt('dragRevertDuration'),
 			start: function(ev, ui) {
 
@@ -532,10 +534,10 @@ function RoomEventRenderer() {
 		var eventStart, eventEnd;
 
 		eventElement.draggable({
-			scroll: false,
-			grid: [ colWidth, snapHeight ],
-			axis: colCnt==1 ? 'y' : false,
+			//grid: [ colWidth, snapHeight ],
 			opacity: opt('dragOpacity'),
+            scroll: true,
+            scrollSensitivity: 100,
 			revertDuration: opt('dragRevertDuration'),
 			start: function(ev, ui) {
 
@@ -672,7 +674,7 @@ function RoomEventRenderer() {
 				else {
 					updateTimeText();
 					timeElement.css('display', ''); // show() was causing display=inline
-					eventElement.draggable('option', 'grid', [colWidth, snapHeight]); // re-enable grid snapping
+//					eventElement.draggable('option', 'grid', [colWidth, snapHeight]); // re-enable grid snapping
 				}
 			}
 		}

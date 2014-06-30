@@ -686,8 +686,10 @@ function Calendar(element, instanceOptions) {
 		if (value === undefined) {
 			return options[name];
 		}
+        else {
+            options[name] = value;
+        }
 		if (name == 'height' || name == 'contentHeight' || name == 'aspectRatio') {
-			options[name] = value;
 			updateSize();
 		}
 	}

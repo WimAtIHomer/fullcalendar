@@ -529,8 +529,8 @@ function RoomView(element, calendar, viewName) {
 				.addClass('fc-last');
 		}
 		
-		colWidth = Math.floor((slotTableWidth - axisWidth) / colCnt);
-		setOuterWidth(dayHeadCells.slice(0, -1), colWidth);
+		//colWidth = Math.floor(((slotTableWidth - axisWidth) / ((colCnt * 2) - 1)) * 2);
+		//setOuterWidth(dayHeadCells.slice(0, -1), colWidth);
 	}
 	
 
