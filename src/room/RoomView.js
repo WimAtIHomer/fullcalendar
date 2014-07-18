@@ -190,10 +190,13 @@ function RoomView(element, calendar, viewName) {
 		var headerClass = tm + "-widget-header";
 		var contentClass = tm + "-widget-content";
         var dayStartClass = tm + "-day-start"
+        var weekendClass = tm + "-weekend"
 		var slotTime;
 		var slotDate;
         var maxDate;
 		var minutes;
+        var today = calendar.getNow().stripTime();
+        var classNames;
 		var slotNormal = slotDuration.asMinutes() % 15 === 0;
 		
 		buildDayTable();
@@ -264,9 +267,29 @@ function RoomView(element, calendar, viewName) {
         maxDate = t.end.clone().time(maxTime);
 		slotCnt = 0;
 		while (slotDate < maxDate) {
-			minutes = slotDate.minutes();
-			s +=
-				"<tr class='fc-slot" + slotCnt + ' ' + (!minutes ? '' : 'fc-minor') + " " + ((slotTime <= minTime) ? dayStartClass: '') + "'>" +
+            classNames = ['fc-slot' + slotCnt];
+            slotDay = slotDate.clone().stripTime();
+            if (slotDay.isSame(today, 'day')) {
+                classNames.push('fc-today');
+            }
+            else if (slotDay < today) {
+                classNames.push('fc-past');
+            }
+            else {
+                classNames.push('fc-future');
+            }
+            minutes = slotDate.minutes();
+            if (minutes) {
+                classNames.push('fc-minor')
+            }
+            if (slotTime <= minTime) {
+                classNames.push(dayStartClass)
+            }
+            if (slotDate.day() == 0 || slotDate.day() == 6) {
+                classNames.push(weekendClass)
+            }
+            s +=
+				"<tr class='" + classNames.join(' ') + "'>" +
 				"<th class='fc-agenda-axis " + headerClass + "'>" +
 				((!slotNormal || !minutes && slotCnt%2 == 0) ?
                     ((slotTime <= minTime) ? htmlEscape(formatDate(slotDate, colFormat)) : htmlEscape(formatDate(slotDate, opt('axisFormat')))) :
@@ -387,12 +410,9 @@ function RoomView(element, calendar, viewName) {
 	function buildDayTableBodyHTML() {
 		var headerClass = tm + "-widget-header"; // TODO: make these when updateOptions() called
 		var contentClass = tm + "-widget-content";
-		var date;
-		var today = calendar.getNow().stripTime();
-		var col;
+        var col;
 		var cellsHTML;
 		var cellHTML;
-		var classNames;
 		var html = '';
 
 		html +=
@@ -403,29 +423,8 @@ function RoomView(element, calendar, viewName) {
 		cellsHTML = '';
 
 		for (col=0; col<colCnt; col++) {
-
-			date = cellToDate(0, col);
-
-			classNames = [
-				'fc-col' + col,
-				'fc-' + dayIDs[date.day()],
-				contentClass
-			];
-			if (date.isSame(today, 'day')) {
-				classNames.push(
-					tm + '-state-highlight',
-					'fc-today'
-				);
-			}
-			else if (date < today) {
-				classNames.push('fc-past');
-			}
-			else {
-				classNames.push('fc-future');
-			}
-
 			cellHTML =
-				"<td class='" + classNames.join(' ') + "'>" +
+				"<td class='fc-col" + col + "'>" +
 				"<div>" +
 				"<div class='fc-day-content'>" +
 				"<div style='position:relative'>&nbsp;</div>" +
