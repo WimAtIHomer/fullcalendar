@@ -738,7 +738,7 @@ function AgendaView(element, calendar, viewName) {
 		}
 
 		if (slotIndex >= 0) {
-			date.time(moment.duration(minTime + slotIndex * slotDuration));
+			date.add(moment.duration(minTime + slotIndex * slotDuration));
 			date = calendar.rezoneDate(date);
 		}
 

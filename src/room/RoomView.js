@@ -743,7 +743,7 @@ function RoomView(element, calendar, viewName) {
 		}
 
 		if (slotIndex >= 0) {
-			date.time(moment.duration(minTime + slotIndex * snapDuration));
+			date.add(moment.duration(minTime + slotIndex * snapDuration));
 			date = calendar.rezoneDate(date);
 		}
 
