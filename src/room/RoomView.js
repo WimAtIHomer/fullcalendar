@@ -159,7 +159,7 @@ function RoomView(element, calendar, viewName) {
 		updateOptions();
         colCnt = rooms.length;
 
-    	buildSkeleton(); // builds day table, slot area, events containers
+		buildSkeleton(); // builds day table, slot area, events containers
 	}
 	
 	
@@ -189,8 +189,8 @@ function RoomView(element, calendar, viewName) {
 		var s;
 		var headerClass = tm + "-widget-header";
 		var contentClass = tm + "-widget-content";
-        var dayStartClass = tm + "-day-start"
-        var weekendClass = tm + "-weekend"
+        var dayStartClass = tm + "-day-start";
+        var weekendClass = tm + "-weekend";
 		var slotTime;
 		var slotDate;
         var maxDate;
@@ -201,63 +201,63 @@ function RoomView(element, calendar, viewName) {
 		
 		buildDayTable();
 
-        if (slotLayer) {
-            slotLayer.remove();
-        }
-		slotLayer =
-			$("<div style='position:absolute;z-index:2;left:0;width:100%'/>")
-				.appendTo(element);
-				
-		if (opt('allDaySlot')) {
-		
-			daySegmentContainer =
-				$("<div class='fc-event-container' style='position:absolute;z-index:8;top:0;left:0'/>")
+		if (slotLayer) {
+			slotContainer.children('.fc-agenda-slots').remove();
+		} else {
+			slotLayer =
+				$("<div style='position:absolute;z-index:2;left:0;width:100%'/>")
+					.appendTo(element);
+
+			if (opt('allDaySlot')) {
+
+				daySegmentContainer =
+					$("<div class='fc-event-container' style='position:absolute;z-index:8;top:0;left:0'/>")
+						.appendTo(slotLayer);
+
+				s =
+					"<table style='width:100%' class='fc-agenda-allday' cellspacing='0'>" +
+					"<tr>" +
+					"<th class='" + headerClass + " fc-agenda-axis'>" +
+					(
+						opt('allDayHTML') ||
+						htmlEscape(opt('allDayText'))
+					) +
+					"</th>" +
+					"<td>" +
+					"<div class='fc-day-content'><div style='position:relative'/></div>" +
+					"</td>" +
+					"<th class='" + headerClass + " fc-agenda-gutter'>&nbsp;</th>" +
+					"</tr>" +
+					"</table>";
+				allDayTable = $(s).appendTo(slotLayer);
+				allDayRow = allDayTable.find('tr');
+
+				dayBind(allDayRow.find('td'));
+
+				slotLayer.append(
+					"<div class='fc-agenda-divider " + headerClass + "'>" +
+					"<div class='fc-agenda-divider-inner'/>" +
+					"</div>"
+				);
+
+			} else {
+
+				daySegmentContainer = $([]); // in jQuery 1.4, we can just do $()
+
+			}
+
+			slotScroller =
+				$("<div style='position:absolute;width:100%;overflow-x:hidden;overflow-y:auto'/>")
 					.appendTo(slotLayer);
-		
-			s =
-				"<table style='width:100%' class='fc-agenda-allday' cellspacing='0'>" +
-				"<tr>" +
-				"<th class='" + headerClass + " fc-agenda-axis'>" +
-				(
-					opt('allDayHTML') ||
-					htmlEscape(opt('allDayText'))
-				) +
-				"</th>" +
-				"<td>" +
-				"<div class='fc-day-content'><div style='position:relative'/></div>" +
-				"</td>" +
-				"<th class='" + headerClass + " fc-agenda-gutter'>&nbsp;</th>" +
-				"</tr>" +
-				"</table>";
-			allDayTable = $(s).appendTo(slotLayer);
-			allDayRow = allDayTable.find('tr');
-			
-			dayBind(allDayRow.find('td'));
-			
-			slotLayer.append(
-				"<div class='fc-agenda-divider " + headerClass + "'>" +
-				"<div class='fc-agenda-divider-inner'/>" +
-				"</div>"
-			);
-			
-		}else{
-		
-			daySegmentContainer = $([]); // in jQuery 1.4, we can just do $()
-		
+
+			slotContainer =
+				$("<div style='position:relative;width:100%;overflow:hidden'/>")
+					.appendTo(slotScroller);
+
+			slotSegmentContainer =
+				$("<div class='fc-event-container' style='position:absolute;z-index:8;top:0;left:0'/>")
+					.appendTo(slotContainer);
 		}
-		
-		slotScroller =
-			$("<div style='position:absolute;width:100%;overflow-x:hidden;overflow-y:auto'/>")
-				.appendTo(slotLayer);
-				
-		slotContainer =
-			$("<div style='position:relative;width:100%;overflow:hidden'/>")
-				.appendTo(slotScroller);
-				
-		slotSegmentContainer =
-			$("<div class='fc-event-container' style='position:absolute;z-index:8;top:0;left:0'/>")
-				.appendTo(slotContainer);
-		
 		s =
 			"<table class='fc-agenda-slots' style='width:100%' cellspacing='0'>" +
 			"<tbody>";
@@ -268,7 +268,7 @@ function RoomView(element, calendar, viewName) {
 		slotCnt = 0;
 		while (slotDate < maxDate) {
             classNames = ['fc-slot' + slotCnt];
-            slotDay = slotDate.clone().stripTime();
+            var slotDay = slotDate.clone().stripTime();
             if (slotDay.isSame(today, 'day')) {
                 classNames.push('fc-today');
             }
@@ -280,18 +280,18 @@ function RoomView(element, calendar, viewName) {
             }
             minutes = slotDate.minutes();
             if (minutes) {
-                classNames.push('fc-minor')
+                classNames.push('fc-minor');
             }
             if (slotTime <= minTime) {
-                classNames.push(dayStartClass)
+                classNames.push(dayStartClass);
             }
-            if (slotDate.day() == 0 || slotDate.day() == 6) {
-                classNames.push(weekendClass)
+            if (slotDate.day() === 0 || slotDate.day() === 6) {
+                classNames.push(weekendClass);
             }
             s +=
 				"<tr class='" + classNames.join(' ') + "'>" +
 				"<th class='fc-agenda-axis " + headerClass + "'>" +
-				((!slotNormal || !minutes && slotCnt%2 == 0) ?
+				((!slotNormal || !minutes && slotCnt%2 === 0) ?
                     ((slotTime <= minTime) ? htmlEscape(formatDate(slotDate, colFormat)) : htmlEscape(formatDate(slotDate, opt('axisFormat')))) :
 					'&nbsp;'
 					) +
@@ -305,7 +305,7 @@ function RoomView(element, calendar, viewName) {
                 slotDate = slotDate.time(slotTime); // will be in UTC but that's good. to avoid DST issues
             } else {
                 slotTime = moment.duration(+minTime);
-                slotDate = slotDate.add('days', 1).time(slotTime); // will be in UTC but that's good. to avoid DST issues
+                slotDate = slotDate.add(1, 'days').time(slotTime); // will be in UTC but that's good. to avoid DST issues
             }
 			slotCnt++;
 		}
@@ -769,7 +769,7 @@ function RoomView(element, calendar, viewName) {
 		var slots = (time - minTime) / slotDuration;
 		var slotIndex = Math.floor(slots);
         if (slotIndex >= slotCnt) {
-            slotIndex = slotCnt - 1
+            slotIndex = slotCnt - 1;
         }
 		var slotPartial = slots - slotIndex;
 		var slotTop = slotTopCache[slotIndex];
@@ -804,7 +804,7 @@ function RoomView(element, calendar, viewName) {
 			return start.clone().add(slotDuration);
 		}
 		else {
-			return start.clone().add('days', 1);
+			return start.clone().add(1, 'days');
 		}
 	}
 	

@@ -65,7 +65,7 @@ function Calendar(element, instanceOptions) {
 	// Apply overrides to the current language's data
 
 	var langData = createObject( // make a cheap clone
-		moment.langData(options.lang)
+		moment.localeData(options.lang)
 	);
 
 	if (options.monthNames) {
@@ -246,8 +246,7 @@ function Calendar(element, instanceOptions) {
 	var date;
 	var events = [];
 	var _dragElement;
-	var rooms = [];
-	
+
 	
 	// Main Rendering
 	// -----------------------------------------------------------------------------------
@@ -610,13 +609,13 @@ function Calendar(element, instanceOptions) {
 	
 	
 	function prevYear() {
-		date.add('years', -1);
+		date.add(-1, 'years');
 		renderView();
 	}
 	
 	
 	function nextYear() {
-		date.add('years', 1);
+		date.add(1, 'years');
 		renderView();
 	}
 	

@@ -6,7 +6,7 @@ describe('$.fullCalendar.moment', function() {
 		it('has no side effects', function() {
 			var oldMom = moment();
 			var oldDate = oldMom.toDate();
-			var newMom = $.fullCalendar.moment(oldMom).add('months', 1);
+			var newMom = $.fullCalendar.moment(oldMom).add(1, 'months');
 			var newDate = newMom.toDate();
 			expect(+oldDate).not.toBe(+newDate);
 		});
