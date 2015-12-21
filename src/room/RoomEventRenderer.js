@@ -525,7 +525,7 @@ function RoomEventRenderer() {
 		var snapDuration = getSnapDuration();
 
 		// states
-		var origPosition; // original position of the element, not the mouse
+		var origPosition = eventElement.position(); // original position of the element, not the mouse
 		var origCell;
 		var isInBounds, prevIsInBounds;
 		var isAllDay, prevIsAllDay;
@@ -544,14 +544,13 @@ function RoomEventRenderer() {
 			revertDuration: opt('dragRevertDuration'),
 			start: function(ev, ui) {
 
+				coordinateGrid.build();
+				origCell = coordinateGrid.cell(ev.pageX, ev.pageY);
+
 				trigger('eventDragStart', eventElement, event, ev, ui);
 				hideEvents(event, eventElement);
 
-				coordinateGrid.build();
-
 				// initialize states
-				origPosition = eventElement.position();
-				origCell = coordinateGrid.cell(ev.pageX, ev.pageY);
 				isInBounds = prevIsInBounds = true;
 				isAllDay = prevIsAllDay = getIsCellAllDay(origCell);
 				colDelta = prevColDelta = 0;
@@ -561,46 +560,30 @@ function RoomEventRenderer() {
 				eventStart = null;
 				eventEnd = null;
 			},
-			drag: function(ev, ui) {
+			stop: function(ev, ui) {
 
-				// NOTE: this `cell` value is only useful for determining in-bounds and all-day.
-				// Bad for anything else due to the discrepancy between the mouse position and the
-				// element position while snapping. (problem revealed in PR #55)
-				//
-				// PS- the problem exists for draggableDayEvent() when dragging an all-day event to a slot event.
-				// We should overhaul the dragging system and stop relying on jQuery UI.
+				clearOverlays();
+				trigger('eventDragStop', eventElement, event, ev, ui);
 				var cell = coordinateGrid.cell(ev.pageX, ev.pageY);
 
 				// update states
 				isInBounds = !!cell;
-				if (isInBounds && origPosition) {
-					isAllDay = getIsCellAllDay(cell);
 
-					// calculate column delta
+				if (isInBounds && origPosition && origCell) {
+					// update roomKey if column switch
 					colDelta = Math.round((ui.position.left - origPosition.left) / colWidth);
-					if (colDelta != prevColDelta) {
-						// calculate the day delta based off of the original clicked column and the column delta
-						var origDate = cellToDate(0, origCell.col);
-						var col = origCell.col + colDelta;
-						col = Math.max(0, col);
-						col = Math.min(colCnt-1, col);
-						var date = cellToDate(0, col);
-						dayDelta = date.diff(origDate, 'days');
-					}
+					// calculate the day delta based off of the original clicked column and the column delta
+					var origDate = cellToDate(0, origCell.col);
+					var col = origCell.col + colDelta;
+					col = Math.max(0, col);
+					col = Math.min(colCnt-1, col);
+					var date = cellToDate(0, col);
+					dayDelta = date.diff(origDate, 'days');
 
 					// calculate minute delta (only if over slots)
 					if (!isAllDay) {
 						snapDelta = Math.round((ui.position.top - origPosition.top) / snapHeight);
 					}
-				}
-
-				// any state changes?
-				if (
-					isInBounds != prevIsInBounds ||
-					isAllDay != prevIsAllDay ||
-					colDelta != prevColDelta ||
-					snapDelta != prevSnapDelta
-				) {
 
 					// compute new dates
 					if (isAllDay) {
@@ -612,30 +595,8 @@ function RoomEventRenderer() {
 						eventEnd = getEventEnd(event).add(snapDelta * snapDuration);
 					}
 
-					updateUI();
-
-					// update previous states for next time
-					prevIsInBounds = isInBounds;
-					prevIsAllDay = isAllDay;
-					prevColDelta = colDelta;
-					prevSnapDelta = snapDelta;
-				}
-
-				// if out-of-bounds, revert when done, and vice versa.
-				eventElement.draggable('option', 'revert', !isInBounds);
-
-			},
-			stop: function(ev, ui) {
-
-				clearOverlays();
-				trigger('eventDragStop', eventElement, event, ev, ui);
-
-				if (isInBounds && (isAllDay || dayDelta || snapDelta)) { // changed!
-                    // update roomKey if column switch
-                    var cell = coordinateGrid.cell(ev.pageX, ev.pageY);
-                    var rooms = opt('rooms');
-                    event.roomKey = rooms[cell.col].key;
-
+					var rooms = opt('rooms');
+					event.roomKey = rooms[cell.col].key;
 					eventDrop(
 						this, // el
 						event,
@@ -645,7 +606,6 @@ function RoomEventRenderer() {
 					);
 				}
 				else { // either no change or out-of-bounds (draggable has already reverted)
-
 					// reset states for next time, and for updateUI()
 					isInBounds = true;
 					isAllDay = false;
@@ -659,8 +619,9 @@ function RoomEventRenderer() {
 					// sometimes fast drags make event revert to wrong position, so reset.
 					// also, if we dragged the element out of the area because of snapping,
 					// but the *mouse* is still in bounds, we need to reset the position.
-					eventElement.css(origPosition);
-
+					if (origPosition) {
+						eventElement.css(origPosition);
+					}
 					showEvents(event, eventElement);
 				}
 			}

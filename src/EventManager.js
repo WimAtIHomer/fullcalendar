@@ -503,8 +503,8 @@ function EventManager(options) { // assumed to be a calendar
 
 		// if no new dates were passed in, compare against the event's existing dates
 		if (!newStart && !newEnd) {
-			newStart = event.start;
-			newEnd = event.end;
+			newStart = t.moment(event.start);
+			newEnd = t.moment(event.end);
 		}
 
 		// NOTE: throughout this function, the initial values of `newStart` and `newEnd` are
