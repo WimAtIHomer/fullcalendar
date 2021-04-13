@@ -15,13 +15,13 @@ function AgendaWeekView(element, calendar) { // TODO: do a WeekView mixin
 
 
 	function incrementDate(date, delta) {
-		return date.clone().stripTime().add(delta, 'weeks').startOf('week');
+		return date.clone().stripTime().add(delta, 'weeks').startOf('isoWeek');
 	}
 
 
 	function render(date) {
 
-		t.intervalStart = date.clone().stripTime().startOf('week');
+		t.intervalStart = date.clone().stripTime().startOf('isoWeek');
 		t.intervalEnd = t.intervalStart.clone().add(1, 'weeks');
 
 		t.start = t.skipHiddenDays(t.intervalStart);

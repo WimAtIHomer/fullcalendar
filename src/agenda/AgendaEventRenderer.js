@@ -80,7 +80,6 @@ function AgendaEventRenderer() {
 	
 	function clearEvents() {
 		getDaySegmentContainer().empty();
-		getSlotSegmentContainer().empty();
 	}
 
 	
@@ -185,9 +184,6 @@ function AgendaEventRenderer() {
 			width,
 			left,
 			right,
-			html = '',
-			eventElements,
-			eventElement,
 			triggerRes,
 			titleElement,
 			height,
@@ -239,24 +235,21 @@ function AgendaEventRenderer() {
 			seg.left = left;
 			seg.outerWidth = width;
 			seg.outerHeight = bottom - top;
-			html += slotSegHtml(event, seg);
+			seg.element = slotSegmentContainer.children("#" + event._id);
+			slotSegElement(event, seg, seg.element);
 		}
 
-		slotSegmentContainer[0].innerHTML = html; // faster than html()
-		eventElements = slotSegmentContainer.children();
-		
 		// retrieve elements, run through eventRender callback, bind event handlers
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
 			event = seg.event;
-			eventElement = $(eventElements[i]); // faster than eq()
-			triggerRes = trigger('eventRender', event, event, eventElement);
+			triggerRes = trigger('eventRender', event, event, seg.element);
 			if (triggerRes === false) {
-				eventElement.remove();
+				seg.element.remove();
 			}else{
 				if (triggerRes && triggerRes !== true) {
-					eventElement.remove();
-					eventElement = $(triggerRes)
+					seg.element.remove();
+					seg.element = $(triggerRes)
 						.css({
 							position: 'absolute',
 							top: seg.top,
@@ -264,13 +257,12 @@ function AgendaEventRenderer() {
 						})
 						.appendTo(slotSegmentContainer);
 				}
-				seg.element = eventElement;
 				if (event._id === modifiedEventId) {
-					bindSlotSeg(event, eventElement, seg);
+					bindSlotSeg(event, seg.element, seg);
 				}else{
-					eventElement[0]._fci = i; // for lazySegBind
+					seg.element[0]._fci = i; // for lazySegBind
 				}
-				reportEventElement(event, eventElement);
+				reportEventElement(event, seg.element);
 			}
 		}
 		
@@ -279,37 +271,49 @@ function AgendaEventRenderer() {
 		// record event sides and title positions
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
-			if ((eventElement = seg.element)) {
-				seg.vsides = vsides(eventElement, true);
-				seg.hsides = hsides(eventElement, true);
-				titleElement = eventElement.find('.fc-event-title');
-				if (titleElement.length) {
-					seg.contentTop = titleElement[0].offsetTop;
-				}
+			seg.vsides = vsides(seg.element, true);
+			seg.hsides = hsides(seg.element, true);
+			titleElement = seg.element.find('.fc-event-title');
+			if (titleElement.length) {
+				seg.contentTop = titleElement[0].offsetTop;
 			}
 		}
 		
 		// set all positions/dimensions at once
 		for (i=0; i<segCnt; i++) {
 			seg = segs[i];
-			if ((eventElement = seg.element)) {
-				eventElement[0].style.width = Math.max(0, seg.outerWidth - seg.hsides) + 'px';
-				height = Math.max(0, seg.outerHeight - seg.vsides);
-				eventElement[0].style.height = height + 'px';
-				event = seg.event;
-				if (seg.contentTop !== undefined && height - seg.contentTop < 10) {
-					// not enough room for title, put it in the time (TODO: maybe make both display:inline instead)
-					eventElement.find('div.fc-event-time')
-						.text(
-							formatDate(event.start, opt('timeFormat')) + ' - ' + event.title
-						);
-					eventElement.find('div.fc-event-title')
-						.remove();
-				}
-				trigger('eventAfterRender', event, event, eventElement);
+			seg.element[0].style.width = Math.max(0, seg.outerWidth - seg.hsides) + 'px';
+			height = Math.max(0, seg.outerHeight - seg.vsides);
+			seg.element[0].style.height = height + 'px';
+			event = seg.event;
+			if (seg.contentTop !== undefined && height - seg.contentTop < 10) {
+				// not enough room for title, put it in the time (TODO: maybe make both display:inline instead)
+				seg.element.find('div.fc-event-time')
+					.text(
+						formatDate(event.start, opt('timeFormat')) + ' - ' + event.title
+					);
+				seg.element.find('div.fc-event-title')
+					.remove();
 			}
+			trigger('eventAfterRender', event, event, seg.element);
 		}
-					
+
+		function slotSegElement(event, seg, element) {
+			if (isEventDraggable(event)) {
+				element.addClass('fc-event-draggable');
+			}
+			if (seg.isStart) {
+				element.addClass('fc-event-start');
+			}
+			if (seg.isEnd) {
+				element.addClass('fc-event-end');
+			}
+			if (event.source) {
+				element.addClass(event.source.className);
+			}
+			element.css("top", seg.top + "px");
+			element.css("left", seg.left + "px");
+		}
 	}
 	
 	
