@@ -42,7 +42,7 @@ function EventManager(options) { // assumed to be a calendar
 	var loadingLevel = 0;
 	var cache = [];
 
-
+	var delay = false;
 
 	var _sources = options.eventSources || [];
 
@@ -71,7 +71,7 @@ function EventManager(options) { // assumed to be a calendar
 	function fetchEvents(start, end) {
 		rangeStart = start;
 		rangeEnd = end;
-		cache = [];
+		//cache = [];
 		var fetchID = ++currentFetchID;
 		var len = sources.length;
 		pendingSourceCnt = len;
@@ -310,6 +310,14 @@ function EventManager(options) { // assumed to be a calendar
 				cache.push(event);
 			}
 			reportEvents(cache);
+			if (!delay) {
+				delay = true;
+				setTimeout(function() {
+					delay = false;
+					reportEvents(cache);
+					console.log(cache.length);
+				}, 500);
+			}
 		}
 	}
 	

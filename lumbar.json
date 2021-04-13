@@ -22,6 +22,10 @@
         "src/util.js",
         "src/moment-ext.js",
         "src/date-formatting.js",
+        "src/agenda/AgendaWeekView.js",
+        "src/agenda/AgendaDayView.js",
+        "src/agenda/AgendaView.js",
+        "src/agenda/AgendaEventRenderer.js",
         "src/room/RoomMonthView.js",
         "src/room/RoomView.js",
         "src/room/RoomEventRenderer.js",
@@ -37,6 +41,7 @@
       "styles": [
         "src/main.css",
         "src/common/common.css",
+        "src/agenda/agenda.css",
         "src/room/room.css"
       ]
     },

@@ -61,7 +61,9 @@ function lazySegBind(container, segs, bindHandlers) {
 		if ((i = e._fci) !== undefined) {
 			e._fci = undefined;
 			seg = segs[i];
-			bindHandlers(seg.event, seg.element, seg);
+			if (seg !== undefined) {
+				bindHandlers(seg.event, seg.element, seg);
+			}
 			$(ev.target).trigger(ev);
 		}
 		ev.stopPropagation();
