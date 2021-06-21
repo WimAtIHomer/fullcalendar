@@ -93,7 +93,7 @@ function AgendaEventRenderer() {
 			colSegs,
 			segs = [];
 
-		for (i=0; i<colCnt; i++) {
+		for (i=colCnt - 1; i>=0; i--) {
 			cellDate = cellToDate(0, i);
 
 			colSegs = sliceSegs(
@@ -651,7 +651,9 @@ function AgendaEventRenderer() {
 					// sometimes fast drags make event revert to wrong position, so reset.
 					// also, if we dragged the element out of the area because of snapping,
 					// but the *mouse* is still in bounds, we need to reset the position.
-					eventElement.css(origPosition);
+					if (origPosition) {
+						eventElement.css(origPosition);
+					}
 
 					showEvents(event, eventElement);
 				}
